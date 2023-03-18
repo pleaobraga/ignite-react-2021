@@ -6,7 +6,7 @@ import OutcomeImg from '../../assets/saidas.svg'
 
 import { Container, RadioBox, TransactionTypeContainer } from './styles'
 import { FormEvent, useState } from 'react'
-import { api } from '../../services/api'
+import { useTransactions } from '../hooks/useTransactionsTransactions'
 
 interface NewTransactionModalProps {
   isOpen: boolean
@@ -17,22 +17,35 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
+  const { createTransaction } = useTransactions()
+
   const [type, setType] = useState('deposit')
   const [title, setTitle] = useState('')
-  const [value, setValue] = useState(0)
+  const [amount, setAmount] = useState(0)
   const [category, setCategory] = useState('')
 
-  function handleCreateNewTransaction(event: FormEvent) {
+  function clearForm() {
+    setTitle('')
+    setAmount(0)
+    setType('deposit')
+    setCategory('')
+  }
+
+  async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault()
 
     const data = {
       type,
       title,
-      value,
+      amount,
       category,
     }
 
-    api.post('transactions', data)
+    await createTransaction(data)
+
+    clearForm()
+
+    onRequestClose()
   }
 
   return (
@@ -64,8 +77,8 @@ export function NewTransactionModal({
         <input
           type="number"
           placeholder="Valor"
-          value={value}
-          onChange={(event) => setValue(Number(event.target.value))}
+          value={amount}
+          onChange={(event) => setAmount(Number(event.target.value))}
         />
 
         <TransactionTypeContainer>
