@@ -7,7 +7,7 @@ export function TransactionsTable() {
 
   useEffect(() => {
     api.get('transactions').then((response) => {
-      setTransactions(response.data)
+      setTransactions(response.data.transactions)
     })
   }, [])
 
@@ -30,10 +30,17 @@ export function TransactionsTable() {
                 <tr key={id}>
                   <td>{title}</td>
                   <td className={type === 'deposit' ? 'deposit' : 'withdraw'}>
-                    RS{amount},00
+                    {new Intl.NumberFormat('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
+                    }).format(amount)}
                   </td>
                   <td>{category}</td>
-                  <td>{createdAt}</td>
+                  <td>
+                    {new Intl.DateTimeFormat('pt-BR').format(
+                      new Date(createdAt)
+                    )}
+                  </td>
                 </tr>
               )
             }
