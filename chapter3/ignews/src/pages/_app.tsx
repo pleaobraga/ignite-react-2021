@@ -1,17 +1,17 @@
 import { Header } from '@/components/Header'
 import type { AppProps } from 'next/app'
-import Head from 'next/head'
+import { SessionProvider } from 'next-auth/react'
 
 import '../styles/global.scss'
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
-    <>
-      <Head>
-        <title>ig.news</title>
-      </Head>
+    <SessionProvider session={session}>
       <Header />
       <Component {...pageProps} />
-    </>
+    </SessionProvider>
   )
 }
